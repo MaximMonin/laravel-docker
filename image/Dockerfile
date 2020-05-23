@@ -76,21 +76,28 @@ WORKDIR /
 
 # Install laravel
 RUN composer create-project --prefer-dist laravel/laravel app
+WORKDIR /app
+RUN composer require laravel/ui --dev
+RUN composer require caouecs/laravel-lang:~6.0
+
+# Generate basic scaffolding... with login / registration
+RUN php artisan ui -n bootstrap && php artisan ui -n vue && php artisan -n ui react \
+    && php artisan ui -n --auth vue \
+    && cp -R vendor/caouecs/laravel-lang/src/ru resources/lang/ \
+    && cp -R vendor/caouecs/laravel-lang/src/uk resources/lang/ \
+    && cp -R vendor/caouecs/laravel-lang/json/ru.json resources/lang/ \
+    && cp -R vendor/caouecs/laravel-lang/json/uk.json resources/lang/ \
+    && php artisan make:middleware Localization
 
 # Install NodeJs
-#RUN git clone https://github.com/nodejs/node.git
-#WORKDIR /node
-#RUN apt-get update && apt install python3-distutils -y && ./configure && make -j4 install 
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \ 
     && apt-get update && apt install nodejs -y
 
-WORKDIR /app
 # change rights
 RUN chown www-data:www-data -R bootstrap && chown www-data:www-data -R storage
 
 # Install node_modules
 RUN npm install && npm run development
-RUN php artisan vendor:publish --tag=laravel-pagination
 
 VOLUME /app
 EXPOSE 80
