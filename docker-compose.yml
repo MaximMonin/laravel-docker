@@ -1,0 +1,66 @@
+version: '3.7'
+
+services:
+  laravel:
+    image: laravel
+    container_name: laravel
+    restart: always
+    networks:
+      default:
+        aliases:
+          - laravel
+    volumes:
+     - ./app:/app
+    ports:
+     - '2380:80'
+    expose:
+      - 80
+    environment:
+      MYSQL_DBHOST: mysql
+      MYSQL_DBNAME: laravel
+
+
+  mysql:
+    image: mariadb:10.4.11
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    container_name: laravel_mysql
+    networks:
+      default:
+        aliases:
+          - mysql
+    volumes:
+      - ./db:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+
+  redis:
+    image: redis:5.0.7
+    container_name: laravel_redis
+    restart: always
+    networks:
+      default:
+        aliases:
+          - redis
+    volumes:
+      - ./redis:/data
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: laravel_phpadmin
+    restart: always
+    ports:
+      - 2381:80
+    environment:
+      MYSQL_USERNAME: root
+      MYSQL_ROOT_PASSWORD: root
+      PMA_HOST: mysql
+
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: "false"
+    ipam:
+      driver: default
