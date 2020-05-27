@@ -57,9 +57,9 @@ RUN apt-get update \
  && docker-php-ext-enable memcached \
  && apt-get remove -fyqq libmemcached-dev
 
-# Install redis ext
+# Install redis opcache ext
 RUN pecl install redis \
- && docker-php-ext-enable redis
+ && docker-php-ext-enable redis opcache
 
 # Install xdebug
 RUN pecl install xdebug
@@ -80,14 +80,15 @@ WORKDIR /app
 RUN composer require laravel/ui --dev
 RUN composer require caouecs/laravel-lang:~6.0
 
-# Generate basic scaffolding... with login / registration
+# Generate basic scaffolding... with auth / registration + mail + localization tables
 RUN php artisan ui -n bootstrap && php artisan ui -n vue && php artisan -n ui react \
     && php artisan ui -n --auth vue \
     && cp -R vendor/caouecs/laravel-lang/src/ru resources/lang/ \
     && cp -R vendor/caouecs/laravel-lang/src/uk resources/lang/ \
     && cp -R vendor/caouecs/laravel-lang/json/ru.json resources/lang/ \
     && cp -R vendor/caouecs/laravel-lang/json/uk.json resources/lang/ \
-    && php artisan make:middleware Localization
+    && php artisan make:middleware Localization \
+    && php artisan vendor:publish --tag=laravel-mail
 
 # Install NodeJs
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \ 
@@ -98,6 +99,11 @@ RUN chown www-data:www-data -R bootstrap && chown www-data:www-data -R storage
 
 # Install node_modules
 RUN npm install && npm run development
+
+#Install Queue worker
+RUN apt install supervisor -y
+ADD laravel-worker.conf /etc/supervisor/conf.d
+ADD start.sh /
 
 VOLUME /app
 EXPOSE 80

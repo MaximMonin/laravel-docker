@@ -5,7 +5,17 @@ services:
     image: laravel
     container_name: laravel
     restart: always
+    entrypoint:
+      - bash
+      - -c
+      - |
+        set -e
+        echo 'Starting queue workers'
+        /start.sh     
+        echo 'Starting apache'
+        exec apache2-foreground
     networks:
+      proxy:
       default:
         aliases:
           - laravel
@@ -16,9 +26,9 @@ services:
     expose:
       - 80
     environment:
-      MYSQL_DBHOST: mysql
-      MYSQL_DBNAME: laravel
-
+      VIRTUAL_HOST: fr6.milkiland.org
+      LETSENCRYPT_HOST: fr6.milkiland.org
+      LETSENCRYPT_EMAIL: admin@milkiland.com
 
   mysql:
     image: mariadb:10.4.11
@@ -64,3 +74,6 @@ networks:
       com.docker.network.enable_ipv6: "false"
     ipam:
       driver: default
+  proxy:
+    external:
+      name: nginx-proxy
