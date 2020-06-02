@@ -3,7 +3,7 @@ FROM php:7.4-apache
 # Install tools required for build stage
 RUN apt-get update \
  && apt-get install -fyqq \
-    bash curl wget rsync ca-certificates openssl openssh-client git tzdata \
+    bash curl wget rsync ca-certificates openssl openssh-client git tzdata libxml2-dev \
     libxrender1 fontconfig libc6 \
     gnupg binutils-gold autoconf \
     g++ gcc gnupg libgcc1 linux-headers-amd64 make python
@@ -12,7 +12,9 @@ RUN apt-get update \
 RUN docker-php-ext-install \
     pcntl \
     bcmath \
-    sockets
+    sockets \
+    soap \
+    opcache
 
 # Install mbstring plugin
 RUN apt-get update \
@@ -57,9 +59,9 @@ RUN apt-get update \
  && docker-php-ext-enable memcached \
  && apt-get remove -fyqq libmemcached-dev
 
-# Install redis opcache ext
+# Install redis ext
 RUN pecl install redis \
- && docker-php-ext-enable redis opcache
+ && docker-php-ext-enable redis
 
 # Install xdebug
 RUN pecl install xdebug
@@ -78,21 +80,29 @@ WORKDIR /
 RUN composer create-project --prefer-dist laravel/laravel app
 WORKDIR /app
 RUN composer require laravel/ui --dev
-RUN composer require caouecs/laravel-lang:~6.0
 
-# Generate basic scaffolding... with auth / registration + mail + localization tables
-RUN php artisan ui -n bootstrap && php artisan ui -n vue && php artisan -n ui react \
-    && php artisan ui -n --auth vue \
+# Install sms + localization + flysystem
+RUN composer require caouecs/laravel-lang:~6.0 \
+                     laravel-notification-channels/turbosms \
+                     laravel/nexmo-notification-channel \
+                     graham-campbell/flysystem \
+                     league/flysystem-aws-s3-v3 \
+                     league/flysystem-sftp \
+                     league/flysystem-webdav \
     && cp -R vendor/caouecs/laravel-lang/src/ru resources/lang/ \
     && cp -R vendor/caouecs/laravel-lang/src/uk resources/lang/ \
     && cp -R vendor/caouecs/laravel-lang/json/ru.json resources/lang/ \
-    && cp -R vendor/caouecs/laravel-lang/json/uk.json resources/lang/ \
-    && php artisan make:middleware Localization \
-    && php artisan vendor:publish --tag=laravel-mail
+    && cp -R vendor/caouecs/laravel-lang/json/uk.json resources/lang/ 
+
+# Generate basic scaffolding... with auth / registration 
+RUN php artisan ui -n vue && php artisan ui -n react && php artisan ui -n bootstrap  \
+    && php artisan ui -n --auth bootstrap
 
 # Install NodeJs
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \ 
     && apt-get update && apt install nodejs -y
+
+RUN npm install jquery popper.js bootstrap urix resolve-url --save-dev
 
 # change rights
 RUN chown www-data:www-data -R bootstrap && chown www-data:www-data -R storage
