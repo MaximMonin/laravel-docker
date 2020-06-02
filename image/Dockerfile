@@ -92,7 +92,12 @@ RUN composer require caouecs/laravel-lang:~6.0 \
     && cp -R vendor/caouecs/laravel-lang/src/ru resources/lang/ \
     && cp -R vendor/caouecs/laravel-lang/src/uk resources/lang/ \
     && cp -R vendor/caouecs/laravel-lang/json/ru.json resources/lang/ \
-    && cp -R vendor/caouecs/laravel-lang/json/uk.json resources/lang/ 
+    && cp -R vendor/caouecs/laravel-lang/json/uk.json resources/lang/ \
+    && php artisan vendor:publish --provider="Nexmo\Laravel\NexmoServiceProvider" \
+    && php artisan vendor:publish --provider="GrahamCampbell\Flysystem\FlysystemServiceProvider" \
+    && php artisan vendor:publish --tag=laravel-mail \
+    && php artisan vendor:publish --tag=laravel-notifications \
+    && php artisan notifications:table
 
 # Generate basic scaffolding... with auth / registration 
 RUN php artisan ui -n vue && php artisan ui -n react && php artisan ui -n bootstrap  \
