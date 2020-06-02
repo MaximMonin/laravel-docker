@@ -21,6 +21,7 @@ services:
           - laravel
     volumes:
      - ./app:/app
+     - ./mail:/etc/ssmtp
     ports:
      - '2380:80'
     expose:
