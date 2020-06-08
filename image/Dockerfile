@@ -99,6 +99,12 @@ RUN composer require caouecs/laravel-lang:~6.0 \
     && php artisan vendor:publish --tag=laravel-notifications \
     && php artisan notifications:table
 
+# Custom Composer Json to install Fileupload
+#RUN composer require pion/laravel-chunk-upload \
+#    && php artisan vendor:publish --provider="Pion\Laravel\ChunkUpload\Providers\ChunkUploadServiceProvider"
+COPY composer.json /app
+RUN composer update && php artisan vendor:publish --provider="Pion\Laravel\ChunkUpload\Providers\ChunkUploadServiceProvider"
+
 # Generate basic scaffolding... with auth / registration 
 RUN php artisan ui -n vue && php artisan ui -n react && php artisan ui -n bootstrap  \
     && php artisan ui -n --auth bootstrap
@@ -107,7 +113,7 @@ RUN php artisan ui -n vue && php artisan ui -n react && php artisan ui -n bootst
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \ 
     && apt-get update && apt install nodejs -y
 
-RUN npm install jquery popper.js bootstrap urix resolve-url --save-dev
+RUN npm install jquery popper.js bootstrap dropzone --save-dev
 
 # change rights
 RUN chown www-data:www-data -R bootstrap && chown www-data:www-data -R storage
