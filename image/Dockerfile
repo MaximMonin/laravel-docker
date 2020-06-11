@@ -3,10 +3,8 @@ FROM php:7.4-apache
 # Install tools required for build stage
 RUN apt-get update \
  && apt-get install -fyqq \
-    bash curl wget rsync ca-certificates openssl openssh-client git tzdata libxml2-dev \
-    libxrender1 fontconfig libc6 \
-    gnupg binutils-gold autoconf \
-    g++ gcc gnupg libgcc1 linux-headers-amd64 make python
+    bash curl wget rsync ca-certificates openssl openssh-client git libxml2-dev libcurl4-gnutls-dev\
+    imagemagick gcc make autoconf libc-dev pkg-config libmagickwand-dev
 
 # Install additional PHP libraries
 RUN docker-php-ext-install \
@@ -14,13 +12,8 @@ RUN docker-php-ext-install \
     bcmath \
     sockets \
     soap \
-    opcache
-
-# Install mbstring plugin
-RUN apt-get update \
- && apt-get install -fyqq libonig5 libonig-dev \
- && docker-php-ext-install mbstring \
- && apt-get remove -fyqq libonig-dev
+    opcache \
+    intl
 
 # Install mysql plugin
 RUN apt-get update \
@@ -42,7 +35,7 @@ RUN apt-get update \
 
 # Install libraries for compiling GD, then build it
 RUN apt-get update \
- && apt-get install -fyqq libfreetype6 libfreetype6-dev libpng16-16 libpng-dev libjpeg62-turbo libjpeg62-turbo-dev \
+ && apt-get install -fyqq libfreetype6-dev libjpeg-dev libpng-dev libwebp-dev libpng16-16 libjpeg62-turbo libjpeg62-turbo-dev \
  && docker-php-ext-install gd \
  && apt-get remove -fyqq libfreetype6-dev libpng-dev libjpeg62-turbo-dev
 
@@ -63,16 +56,22 @@ RUN apt-get update \
 RUN pecl install redis \
  && docker-php-ext-enable redis
 
-# Install xdebug
-RUN pecl install xdebug
+# Install xdebug pecl_http imagick
+RUN pecl channel-update pecl.php.net && pecl install xdebug \
+ && pecl install raphf propro \
+ && docker-php-ext-enable raphf propro \
+ && pecl install pecl_http
 
-# Install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
- && chmod 755 /usr/bin/composer
+RUN apt install libmagickwand-dev -y && echo '' | pecl install imagick && echo extension=imagick.so > /usr/local/etc/php/conf.d/imagick.ini
 
 # Add apache to run and configure
 RUN a2enmod rewrite && a2enmod session && a2enmod session_cookie && a2enmod session_crypto && a2enmod deflate
 ADD apache.conf /etc/apache2/sites-available/000-default.conf
+COPY php-add.ini /usr/local/etc/php/conf.d/
+
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
+ && chmod 755 /usr/bin/composer
 
 WORKDIR /
 
@@ -115,9 +114,6 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
 
 RUN npm install jquery popper.js bootstrap dropzone --save-dev
 
-# change rights
-RUN chown www-data:www-data -R bootstrap && chown www-data:www-data -R storage
-
 # Install node_modules
 RUN npm install && npm run development
 
@@ -130,6 +126,9 @@ ADD start.sh /
 RUN echo 'deb http://deb.debian.org/debian stretch main' >> /etc/apt/sources.list \
     && apt update && apt install ssmtp -y && chfn -f "Laravel" root && chfn -f "Laravel" www-data && chmod -R a+r /etc/ssmtp \
     && sed -i -- 's!/usr/sbin/sendmail -bs!/usr/sbin/sendmail -i -t!' config/mail.php
+
+# change rights
+RUN chown www-data:www-data -R bootstrap storage
 
 VOLUME /app
 EXPOSE 80
