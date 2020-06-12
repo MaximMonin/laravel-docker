@@ -60,9 +60,9 @@ RUN pecl install redis \
 RUN pecl channel-update pecl.php.net && pecl install xdebug \
  && pecl install raphf propro \
  && docker-php-ext-enable raphf propro \
- && pecl install pecl_http
-
-RUN apt install libmagickwand-dev -y && echo '' | pecl install imagick && echo extension=imagick.so > /usr/local/etc/php/conf.d/imagick.ini
+ && pecl install pecl_http \
+ && echo extension=http.so > /usr/local/etc/php/conf.d/docker-php-ext-http.ini \
+ && apt install libmagickwand-dev -y && echo '' | pecl install imagick && echo extension=imagick.so > /usr/local/etc/php/conf.d/imagick.ini
 
 # Add apache to run and configure
 RUN a2enmod rewrite && a2enmod session && a2enmod session_cookie && a2enmod session_crypto && a2enmod deflate
