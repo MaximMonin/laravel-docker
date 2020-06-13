@@ -10,8 +10,8 @@ services:
       - -c
       - |
         set -e
-        echo 'Starting queue workers'
-        /start.sh     
+        echo 'Starting queue workers and sheduler'
+        /start.sh
         echo 'Starting apache'
         exec apache2-foreground
     networks:
