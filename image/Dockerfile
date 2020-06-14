@@ -127,9 +127,9 @@ RUN echo 'deb http://deb.debian.org/debian stretch main' >> /etc/apt/sources.lis
     && apt update && apt install ssmtp -y && chfn -f "Laravel" root && chfn -f "Laravel" www-data && chmod -R a+r /etc/ssmtp \
     && sed -i -- 's!/usr/sbin/sendmail -bs!/usr/sbin/sendmail -i -t!' config/mail.php
 
-# Install cron laravel sheduler
-RUN apt-get update && apt-get install -y cron
-COPY crontab /etc/
+# Install cron laravel scheduler
+RUN apt-get update && apt-get install -y cron && echo "# Laravel scheduler" >> /etc/crontab \
+  && echo "* * * * * root cd /app && php artisan schedule:run >> /dev/null 2>&1" >> /etc/crontab
 
 # change rights
 RUN chown www-data:www-data -R bootstrap storage

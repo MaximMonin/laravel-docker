@@ -5,12 +5,15 @@ services:
     image: laravel
     container_name: laravel
     restart: always
+    depends_on:
+      - mysql
+      - redis
     entrypoint:
       - bash
       - -c
       - |
         set -e
-        echo 'Starting queue workers and sheduler'
+        echo 'Starting queue workers and scheduler'
         /start.sh
         echo 'Starting apache'
         exec apache2-foreground
@@ -61,6 +64,8 @@ services:
     image: phpmyadmin/phpmyadmin
     container_name: laravel_phpadmin
     restart: always
+    depends_on:
+      - mysql
     ports:
       - 2381:80
     environment:
