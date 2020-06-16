@@ -80,7 +80,7 @@ RUN composer create-project --prefer-dist laravel/laravel app
 WORKDIR /app
 RUN composer require laravel/ui --dev
 
-# Install sms + localization + flysystem
+# Install sms + localization + flysystem + pusher
 RUN composer require caouecs/laravel-lang:~6.0 \
                      laravel-notification-channels/turbosms \
                      laravel/nexmo-notification-channel \
@@ -88,6 +88,7 @@ RUN composer require caouecs/laravel-lang:~6.0 \
                      league/flysystem-aws-s3-v3 \
                      league/flysystem-sftp \
                      league/flysystem-webdav \
+                     pusher/pusher-php-server \
     && cp -R vendor/caouecs/laravel-lang/src/ru resources/lang/ \
     && cp -R vendor/caouecs/laravel-lang/src/uk resources/lang/ \
     && cp -R vendor/caouecs/laravel-lang/json/ru.json resources/lang/ \

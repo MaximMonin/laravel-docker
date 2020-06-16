@@ -1,6 +1,26 @@
 version: '3.7'
 
 services:
+  loadbalance:
+    image: nginx:1.13.1
+    container_name: laravel-loadbalance
+    depends_on:
+      - laravel
+      - socketio
+    expose:
+      - 80
+      - 443
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    environment:
+      VIRTUAL_HOST: fr6.milkiland.org
+      VIRTUAL_PORT: 80
+      LETSENCRYPT_HOST: fr6.milkiland.org
+      LETSENCRYPT_EMAIL: admin@milkiland.com
+    networks:
+      proxy:
+      default:
+
   laravel:
     image: laravel
     container_name: laravel
@@ -8,6 +28,7 @@ services:
     depends_on:
       - mysql
       - redis
+      - socketio
     entrypoint:
       - bash
       - -c
@@ -18,7 +39,6 @@ services:
         echo 'Starting apache'
         exec apache2-foreground
     networks:
-      proxy:
       default:
         aliases:
           - laravel
@@ -29,10 +49,6 @@ services:
      - '2380:80'
     expose:
       - 80
-    environment:
-      VIRTUAL_HOST: fr6.milkiland.org
-      LETSENCRYPT_HOST: fr6.milkiland.org
-      LETSENCRYPT_EMAIL: admin@milkiland.com
 
   mysql:
     image: mariadb:10.4.11
@@ -59,6 +75,27 @@ services:
           - redis
     volumes:
       - ./redis:/data
+
+  socketio:
+    image: mintopia/laravel-echo-server
+    restart: always
+    container_name: laravel_socketio
+    depends_on:
+      - redis
+    networks:
+      default:
+        aliases:
+          - socketio
+    expose:
+      - 6001
+    environment:
+      - LARAVEL_ECHO_SERVER_DEBUG=true
+      - ECHO_DEVMODE=true
+      - ECHO_PROTOCOL=http
+      - ECHO_REDIS_PORT=6379
+      - ECHO_REDIS_HOSTNAME=redis
+      - ECHO_ALLOW_CORS=true
+      - ECHO_ALLOW_ORIGIN=http://fr6.milkiland.org
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
