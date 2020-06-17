@@ -88,7 +88,10 @@ services:
           - socketio
     expose:
       - 6001
+    ports:
+      - "6001:6001"
     environment:
+      - LARAVEL_ECHO_SERVER_AUTH_HOST=http://laravel
       - LARAVEL_ECHO_SERVER_DEBUG=true
       - ECHO_DEVMODE=true
       - ECHO_PROTOCOL=http
