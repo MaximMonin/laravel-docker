@@ -128,6 +128,8 @@ services:
       - mysql
     ports:
       - 2381:80
+    networks:
+      default:
     environment:
       MYSQL_USERNAME: root
       MYSQL_ROOT_PASSWORD: root
