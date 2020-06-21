@@ -88,21 +88,17 @@ RUN composer require caouecs/laravel-lang:~6.0 \
                      league/flysystem-aws-s3-v3 \
                      league/flysystem-sftp \
                      league/flysystem-webdav \
+                     pion/laravel-chunk-upload \
     && cp -R vendor/caouecs/laravel-lang/src/ru resources/lang/ \
     && cp -R vendor/caouecs/laravel-lang/src/uk resources/lang/ \
     && cp -R vendor/caouecs/laravel-lang/json/ru.json resources/lang/ \
     && cp -R vendor/caouecs/laravel-lang/json/uk.json resources/lang/ \
     && php artisan vendor:publish --provider="Nexmo\Laravel\NexmoServiceProvider" \
     && php artisan vendor:publish --provider="GrahamCampbell\Flysystem\FlysystemServiceProvider" \
+    && php artisan vendor:publish --provider="Pion\Laravel\ChunkUpload\Providers\ChunkUploadServiceProvider" \
     && php artisan vendor:publish --tag=laravel-mail \
     && php artisan vendor:publish --tag=laravel-notifications \
     && php artisan notifications:table
-
-# Custom Composer Json to install Fileupload
-#RUN composer require pion/laravel-chunk-upload \
-#    && php artisan vendor:publish --provider="Pion\Laravel\ChunkUpload\Providers\ChunkUploadServiceProvider"
-COPY composer.json /app
-RUN composer update && php artisan vendor:publish --provider="Pion\Laravel\ChunkUpload\Providers\ChunkUploadServiceProvider"
 
 # Generate basic scaffolding... with auth / registration 
 RUN php artisan ui -n vue && php artisan ui -n react && php artisan ui -n bootstrap  \
@@ -113,7 +109,7 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
     && apt-get update && apt install nodejs -y
 
 RUN npm install jquery popper.js bootstrap dropzone socket.io-client laravel-echo --save-dev 
-RUN npm install vue vue-router vuetify vue2-editor @mdi/font --save-dev
+RUN npm install vue vue-router bootstrap-vue vue2-editor --save-dev
 
 # Install node_modules
 RUN npm install && npm run development
