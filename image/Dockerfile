@@ -98,7 +98,8 @@ RUN composer require caouecs/laravel-lang:~6.0 \
     && php artisan vendor:publish --provider="Pion\Laravel\ChunkUpload\Providers\ChunkUploadServiceProvider" \
     && php artisan vendor:publish --tag=laravel-mail \
     && php artisan vendor:publish --tag=laravel-notifications \
-    && php artisan notifications:table
+    && php artisan notifications:table \
+    && php artisan storage:link
 
 # Generate basic scaffolding... with auth / registration 
 RUN php artisan ui -n vue && php artisan ui -n react && php artisan ui -n bootstrap  \
