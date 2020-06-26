@@ -42,6 +42,7 @@ services:
     volumes:
      - ./app:/app
      - ./mail:/etc/ssmtp
+     - ./worker/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
     expose:
       - 9000
 
