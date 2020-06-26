@@ -1,81 +1,66 @@
-FROM php:7.4-apache
+FROM php:7.4-fpm
 
 # Install tools required for build stage
 RUN apt-get update \
- && apt-get install -fyqq \
+ && apt-get install -fyqq --no-install-recommends \
     bash curl wget rsync ca-certificates openssl openssh-client git libxml2-dev libcurl4-gnutls-dev\
-    imagemagick gcc make autoconf libc-dev pkg-config libmagickwand-dev
-
+    imagemagick gcc make autoconf libc-dev pkg-config libmagickwand-dev \
 # Install additional PHP libraries
-RUN docker-php-ext-install \
+&&  docker-php-ext-install \
     pcntl \
     bcmath \
     sockets \
     soap \
     opcache \
-    intl
-
+    intl \
 # Install mysql plugin
-RUN apt-get update \
+&&  apt-get update \
  && apt-get install -fyqq mariadb-client libmariadbclient-dev \
  && docker-php-ext-install pdo_mysql mysqli \
- && apt-get remove -fyqq libmariadbclient-dev
-
+ && apt-get remove -fyqq libmariadbclient-dev \
 # Install pgsql plugin
-RUN apt-get update \
+&& apt-get update \
  && apt-get install -fyqq postgresql-client libpq-dev \
  && docker-php-ext-install pdo_pgsql pgsql \
- && apt-get remove -fyqq libpq-dev
-
-# Install internalization plugin
-RUN apt-get update \
- && apt-get install -fyqq libicu63 libicu-dev \
- && docker-php-ext-install intl \
- && apt-get remove -fyqq libicu-dev
-
+ && apt-get remove -fyqq libpq-dev \
 # Install libraries for compiling GD, then build it
-RUN apt-get update \
+&& apt-get update \
  && apt-get install -fyqq libfreetype6-dev libjpeg-dev libpng-dev libwebp-dev libpng16-16 libjpeg62-turbo libjpeg62-turbo-dev \
  && docker-php-ext-install gd \
- && apt-get remove -fyqq libfreetype6-dev libpng-dev libjpeg62-turbo-dev
-
+ && apt-get remove -fyqq libfreetype6-dev libpng-dev libjpeg62-turbo-dev \
 # Add ZIP archives support
-RUN apt-get update \
+&& apt-get update \
  && apt-get install -fyqq zip libzip-dev \
  && docker-php-ext-install zip \
- && apt-get remove -fyqq libzip-dev
-
+ && apt-get remove -fyqq libzip-dev \
 # Install memcache
-RUN apt-get update \
+&& apt-get update \
  && apt-get install -fyqq libmemcached11 libmemcached-dev \
  && pecl install memcached \
  && docker-php-ext-enable memcached \
- && apt-get remove -fyqq libmemcached-dev
-
+ && apt-get remove -fyqq libmemcached-dev \
 # Install redis ext
-RUN pecl install redis \
- && docker-php-ext-enable redis
-
+&& pecl install redis \
+ && docker-php-ext-enable redis \
 # Install xdebug pecl_http imagick
-RUN pecl channel-update pecl.php.net && pecl install xdebug \
+&& pecl channel-update pecl.php.net && pecl install xdebug \
  && pecl install raphf propro \
  && docker-php-ext-enable raphf propro \
  && pecl install pecl_http \
  && echo extension=http.so > /usr/local/etc/php/conf.d/docker-php-ext-http.ini \
- && apt install libmagickwand-dev -y && echo '' | pecl install imagick && echo extension=imagick.so > /usr/local/etc/php/conf.d/imagick.ini
+ && apt install libmagickwand-dev -y && echo '' | pecl install imagick && echo extension=imagick.so > /usr/local/etc/php/conf.d/imagick.ini \
+# Install composer
+&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
+ && chmod 755 /usr/bin/composer \
+# Autoclean
+ && apt-get autoclean -y && rm -rf /var/lib/apt/lists/* && rm -rf /tmp/pear/ \
+ && apt-get remove libgmp-dev libgnutls28-dev libhashkit-dev libidn2-dev libmariadb-dev libp11-kit-dev libsasl2-dev libtasn1-6-dev nettle-dev -y \
+ && apt-get update && apt upgrade -y && apt-get install procps -y
 
-# Add apache to run and configure
-RUN a2enmod rewrite && a2enmod session && a2enmod session_cookie && a2enmod session_crypto && a2enmod deflate
-ADD apache.conf /etc/apache2/sites-available/000-default.conf
 COPY php-add.ini /usr/local/etc/php/conf.d/
 
-# Install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
- && chmod 755 /usr/bin/composer
-
-WORKDIR /
-
 # Install laravel
+WORKDIR /
 RUN composer create-project --prefer-dist laravel/laravel app
 WORKDIR /app
 RUN composer require laravel/ui --dev
@@ -99,10 +84,8 @@ RUN composer require caouecs/laravel-lang:~6.0 \
     && php artisan vendor:publish --tag=laravel-mail \
     && php artisan vendor:publish --tag=laravel-notifications \
     && php artisan notifications:table \
-    && php artisan storage:link
-
-# Generate basic scaffolding... with auth / registration 
-RUN php artisan ui -n vue && php artisan ui -n react && php artisan ui -n bootstrap  \
+    && php artisan storage:link \
+    && php artisan ui -n vue && php artisan ui -n react && php artisan ui -n bootstrap  \
     && php artisan ui -n --auth bootstrap
 
 # Install NodeJs
@@ -133,4 +116,3 @@ RUN apt-get update && apt-get install -y cron && echo "# Laravel scheduler" >> /
 RUN chown www-data:www-data -R bootstrap storage
 
 VOLUME /app
-EXPOSE 80

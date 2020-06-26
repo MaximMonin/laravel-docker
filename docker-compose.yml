@@ -7,11 +7,15 @@ services:
     depends_on:
       - laravel
       - socketio
+    ports:
+      - 2380:80
     expose:
       - 80
       - 443
     volumes:
+      - ./app:/app
       - ./nginx:/etc/nginx/conf.d
+      - ./worker/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
     environment:
       VIRTUAL_HOST: fr6.milkiland.org
       VIRTUAL_PORT: 80
@@ -20,6 +24,8 @@ services:
     networks:
       proxy:
       default:
+        aliases:
+          - laravelnginx
 
   laravel:
     image: laravel
@@ -36,10 +42,8 @@ services:
     volumes:
      - ./app:/app
      - ./mail:/etc/ssmtp
-    ports:
-     - '2380:80'
     expose:
-      - 80
+      - 9000
 
   laravel_worker:
     image: laravel
@@ -56,8 +60,8 @@ services:
         set -e
         echo 'Starting queue workers and scheduler'
         /start.sh
-        echo 'Starting apache'
-        exec apache2-foreground
+        echo 'Starting php-fpm'
+        exec php-fpm
     networks:
       default:
         aliases:
@@ -67,7 +71,7 @@ services:
      - ./mail:/etc/ssmtp
      - ./worker/laravel-worker.conf:/etc/supervisor/conf.d/laravel-worker.conf:ro
     expose:
-      - 80
+      - 9000
 
 
   mysql:
@@ -111,7 +115,7 @@ services:
     ports:
       - "6001:6001"
     environment:
-      - LARAVEL_ECHO_SERVER_AUTH_HOST=http://laravel
+      - LARAVEL_ECHO_SERVER_AUTH_HOST=http://laravelnginx
       - LARAVEL_ECHO_SERVER_DEBUG=true
       - ECHO_DEVMODE=true
       - ECHO_PROTOCOL=http
