@@ -71,6 +71,7 @@ services:
      - ./app:/app
      - ./mail:/etc/ssmtp
      - ./worker/laravel-worker.conf:/etc/supervisor/conf.d/laravel-worker.conf:ro
+     - ./worker/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
     expose:
       - 9000
 
