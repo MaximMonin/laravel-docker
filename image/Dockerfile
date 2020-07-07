@@ -93,7 +93,7 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
     && apt-get update && apt install nodejs -y
 
 RUN npm install jquery popper.js bootstrap dropzone socket.io-client laravel-echo --save-dev 
-RUN npm install vue vue-router bootstrap-vue vue2-editor --save-dev
+RUN npm install vue vue-router bootstrap-vue vuex vue2-editor --save-dev
 
 # Install node_modules
 RUN npm install && npm run development
