@@ -74,6 +74,7 @@ RUN composer require caouecs/laravel-lang:~6.0 \
                      league/flysystem-sftp \
                      league/flysystem-webdav \
                      pion/laravel-chunk-upload \
+                     intervention/image \
     && cp -R vendor/caouecs/laravel-lang/src/ru resources/lang/ \
     && cp -R vendor/caouecs/laravel-lang/src/uk resources/lang/ \
     && cp -R vendor/caouecs/laravel-lang/json/ru.json resources/lang/ \
@@ -81,6 +82,7 @@ RUN composer require caouecs/laravel-lang:~6.0 \
     && php artisan vendor:publish --provider="Nexmo\Laravel\NexmoServiceProvider" \
     && php artisan vendor:publish --provider="GrahamCampbell\Flysystem\FlysystemServiceProvider" \
     && php artisan vendor:publish --provider="Pion\Laravel\ChunkUpload\Providers\ChunkUploadServiceProvider" \
+    && php artisan vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent" \
     && php artisan vendor:publish --tag=laravel-mail \
     && php artisan vendor:publish --tag=laravel-notifications \
     && php artisan notifications:table \
