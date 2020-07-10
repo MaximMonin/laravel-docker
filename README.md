@@ -21,7 +21,8 @@ By default it redirect all http traffic to laravel cluster php-fpm containers, r
 Uses nginx static web server for your.site/cdn catalog and for *.js and *.css files to reduce load to laravel cluster.
 3. /worker/laravel-worker.conf consists supervisor default configuration (count and names of laravel workers)
 4. /worker/www.conf consists dafault php-fpm configuration
-5. Docker-compose file consists all services in one file. By default laravel container is default site, laravel-worker container run laravels workers and laravel scheduler.
+5. Docker-compose file consists all services in one file. 
+By default laravel container is default site, laravel-worker container run laravels workers and laravel scheduler.
 6. Setup laravel app/.env file.
 
 By default port 2380 used for local site testing and 2381 for php administration. (root/root)
