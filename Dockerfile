@@ -57,7 +57,7 @@ RUN apt-get update \
  && apt-get remove libgmp-dev libgnutls28-dev libhashkit-dev libidn2-dev libmariadb-dev libp11-kit-dev libsasl2-dev libtasn1-6-dev nettle-dev -y \
  && apt-get update && apt upgrade -y && apt-get install procps -y
 
-COPY php-add.ini /usr/local/etc/php/conf.d/
+COPY image/php-add.ini /usr/local/etc/php/conf.d/
 
 # Install laravel
 WORKDIR /
@@ -88,22 +88,24 @@ RUN composer require caouecs/laravel-lang:~6.0 \
     && php artisan notifications:table \
     && php artisan storage:link \
     && php artisan ui -n vue && php artisan ui -n react && php artisan ui -n bootstrap  \
-    && php artisan ui -n --auth bootstrap
+    && php artisan ui -n --auth bootstrap \
+# Install Laravel Dusk
+    && apt-get -y install libnss3 && composer require laravel/dusk --dev && php artisan dusk:install
 
 # Install NodeJs
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \ 
     && apt-get update && apt install nodejs -y
 
 RUN npm install jquery popper.js bootstrap dropzone socket.io-client laravel-echo --save-dev 
-RUN npm install vue vue-router bootstrap-vue vuex --save-dev
+RUN npm install vue vue-router bootstrap-vue vuex vue-template-compiler --save-dev
 
 # Install node_modules
 RUN npm install && npm run development
 
 #Install Queue worker
 RUN apt install supervisor -y
-ADD laravel-worker.conf /etc/supervisor/conf.d
-ADD start.sh /
+ADD image/laravel-worker.conf /etc/supervisor/conf.d
+ADD image/start.sh /
 
 #  Install mail ssmtp
 RUN echo 'deb http://deb.debian.org/debian stretch main' >> /etc/apt/sources.list \

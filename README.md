@@ -3,7 +3,7 @@ This package includes: php-fpm 7.4 based enviroment, latest Laravel framework (7
 
 ## Installation
 ~~~
-1. Build laravel Image. Use image/build.sh
+1. Build laravel Image. Use build.sh. You can use docker pull maximmonin/laravel instead.
 2. Run prepare.sh to extract laravel app directory from laravel docker image to ./app
 3. Start containters start.sh
 4. Run create_mysqldb.sh to create default mysql db.
@@ -30,6 +30,6 @@ By default port 2380 used for local site testing and 2381 for php administration
 
 ## More
 ~~~
-Copy your project to ./app directory and run npm_run_dev.sh or npm_run_prod.sh to run server in development or production mode
+Copy your project to ./app directory and run npm_run_dev.sh or npm_run_prod.sh to compile java script in development or production mode
 https://github.com/MaximMonin/laravel as test example.
 ~~~
