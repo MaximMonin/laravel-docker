@@ -92,6 +92,18 @@ RUN composer require caouecs/laravel-lang:~6.0 \
 # Install Laravel Dusk
     && apt-get -y install libnss3 && composer require laravel/dusk --dev && php artisan dusk:install
 
+# Install google chrome for Laravel Dusk
+ARG CHROME_VERSION="google-chrome-stable"
+RUN apt-get install -y gnupg2 && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+  && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
+  && apt-get update -qqy \
+  && apt-get -qqy install \
+    ${CHROME_VERSION:-google-chrome-stable} \
+  && rm /etc/apt/sources.list.d/google-chrome.list \
+  && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+COPY image/DuskTestCase.php /app/tests/
+
+
 # Install NodeJs
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \ 
     && apt-get update && apt install nodejs -y

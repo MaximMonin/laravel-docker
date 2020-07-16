@@ -78,7 +78,6 @@ services:
     expose:
       - 9000
 
-
   mysql:
     image: mariadb:10.4.11
     restart: always
