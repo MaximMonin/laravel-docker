@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo docker build -t laravel .
+sudo docker build -t maximmonin/laravel .

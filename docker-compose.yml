@@ -29,7 +29,7 @@ services:
           - laravelnginx
 
   laravel:
-    image: laravel
+    image: maximmonin/laravel
     container_name: laravel
     restart: always
     depends_on:
@@ -49,7 +49,7 @@ services:
       - 9000
 
   laravel_worker:
-    image: laravel
+    image: maximmonin/laravel
     container_name: laravel-worker
     restart: always
     depends_on:
