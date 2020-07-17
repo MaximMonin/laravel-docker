@@ -65,7 +65,7 @@ RUN composer create-project --prefer-dist laravel/laravel app
 WORKDIR /app
 RUN composer require laravel/ui --dev
 
-# Install sms + localization + flysystem
+# Install sms + localization + flysystem + chunk upload + image processing
 RUN composer require caouecs/laravel-lang:~6.0 \
                      laravel-notification-channels/turbosms \
                      laravel/nexmo-notification-channel \
