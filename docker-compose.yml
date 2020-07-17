@@ -164,6 +164,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       PMA_HOST: mysql
 
+
 networks:
   default:
     driver: bridge
