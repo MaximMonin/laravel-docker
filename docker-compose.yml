@@ -131,6 +131,22 @@ services:
       - ECHO_ALLOW_CORS=true
       - ECHO_ALLOW_ORIGIN=http://fr6.milkiland.org
 
+  selenium:
+    image: selenium/standalone-chrome
+    restart: always
+    container_name: laravel-selenium
+    depends_on:
+      - loadbalance
+    links:
+      - loadbalance:laravelnginx
+    volumes:
+      - /dev/shm:/dev/shm
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
+        aliases:
+          - selenium
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: laravel-phpadmin

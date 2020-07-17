@@ -2,7 +2,7 @@ APP_NAME=Laravel
 APP_ENV=local
 APP_KEY=base64:aIkY5gVy0aQUpZDIPzLirIg8bRnzdAeSm7l427d+syk=
 APP_DEBUG=true
-APP_URL=http://localhost
+APP_URL=http://laravelnginx
 
 LOG_CHANNEL=stack
 
