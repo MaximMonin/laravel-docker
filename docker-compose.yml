@@ -132,13 +132,11 @@ services:
       - ECHO_ALLOW_ORIGIN=http://fr6.milkiland.org
 
   selenium:
-    image: selenium/standalone-chrome
+    image: selenium/hub
     restart: always
     container_name: laravel-selenium
     depends_on:
       - loadbalance
-    links:
-      - loadbalance:laravelnginx
     volumes:
       - /dev/shm:/dev/shm
       - /etc/localtime:/etc/localtime:ro
@@ -146,6 +144,34 @@ services:
       default:
         aliases:
           - selenium
+
+  selenium-chrome:
+    image: selenium/node-chrome
+    restart: always
+    container_name: laravel-selenium-chrome
+    depends_on:
+      - selenium
+    environment:
+      - HUB_HOST=selenium
+      - HUB_PORT=4444
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
+
+  selenium-firefox:
+    image: selenium/node-firefox
+    restart: always
+    container_name: laravel-selenium-firefox
+    depends_on:
+      - selenium
+    environment:
+      - HUB_HOST=selenium
+      - HUB_PORT=4444
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
