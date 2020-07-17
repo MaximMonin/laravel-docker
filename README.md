@@ -32,4 +32,5 @@ By default port 2380 used for local site testing and 2381 for php administration
 ~~~
 Copy your project to ./app directory and run npm_run_dev.sh or npm_run_prod.sh to compile java script in development or production mode
 https://github.com/MaximMonin/laravel as test example.
+Use run_tests.sh to run phpunit tests, and run_tests_dusk.sh to to run browser tests though Laravel Dusk
 ~~~
