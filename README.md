@@ -5,8 +5,9 @@ This package includes: php-fpm 7.4 based enviroment, latest Laravel framework (7
 ~~~
 1. Build laravel Image. Use build.sh. You can use docker pull maximmonin/laravel instead.
 2. Run prepare.sh to extract laravel app directory from laravel docker image to ./app
-3. Start containters start.sh
-4. Run create_mysqldb.sh to create default mysql db.
+3. Copy env-docker file to .env and change values to your site
+4. Start containters start.sh
+5. Run create_mysqldb.sh to create default mysql db.
 
 Docker compose works with combination of nginx-proxy https://github.com/MaximMonin/nginx-ssh-proxy-docker, or as local installation
 To create nginx-proxy network run sudo docker network create nginx-proxy
