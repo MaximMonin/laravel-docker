@@ -17,7 +17,7 @@ To create nginx-proxy network run sudo docker network create nginx-proxy
 Docker Image laravel includes supepvisor to run laravel workers, and cron to run laravel scheduler, smtp mail driver
 1. /mail catalog consists ssmtp mail configuration files
 2. /nginx catalog consists nginx loadbalance configuration.
-By default it redirect all http traffic to laravel cluster php-fpm containers, redirects socker.io traffic to Laravel Echo 
+By default it redirect all http traffic to laravel cluster php-fpm containers, redirects socket.io traffic to Laravel Echo 
 Uses nginx static web server for your.site/cdn catalog and for *.js and *.css files to reduce load to laravel cluster.
 3. /worker/laravel-worker.conf consists supervisor default configuration (count and names of laravel workers)
 4. /worker/www.conf consists dafault php-fpm configuration (on demand, max 100 threads, auto shutdown 10 sec)
