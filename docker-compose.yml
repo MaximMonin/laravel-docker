@@ -3,6 +3,7 @@ version: '3.7'
 services:
   loadbalance:
     image: nginx:1.13.1
+    restart: always
     container_name: laravel-loadbalance
     depends_on:
       - laravel
@@ -15,7 +16,6 @@ services:
     volumes:
       - ./app:/app
       - ./nginx:/etc/nginx/conf.d
-      - ./worker/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
       - /etc/localtime:/etc/localtime:ro
     environment:
       - VIRTUAL_HOST
