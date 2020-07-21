@@ -101,8 +101,13 @@ RUN apt-get install -y gnupg2 && wget -q -O - https://dl-ssl.google.com/linux/li
     ${CHROME_VERSION:-google-chrome-stable} \
   && rm /etc/apt/sources.list.d/google-chrome.list \
   && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
-COPY image/DuskTestCase.php /app/tests/
 
+COPY image/DuskTestCase.php /app/tests/
+COPY image/.env /app/
+
+# Install gitlab runner
+RUN curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | bash - \
+  && apt install -y gitlab-runner
 
 # Install NodeJs
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \ 
@@ -114,12 +119,12 @@ RUN npm install vue vue-router bootstrap-vue vuex vue-template-compiler --save-d
 # Install node_modules
 RUN npm install && npm run development
 
-#Install Queue worker
+# Install Queue worker
 RUN apt install supervisor -y
 ADD image/laravel-worker.conf /etc/supervisor/conf.d
 ADD image/start.sh /
 
-#  Install mail ssmtp
+# Install mail ssmtp
 RUN echo 'deb http://deb.debian.org/debian stretch main' >> /etc/apt/sources.list \
     && apt update && apt install ssmtp -y && chfn -f "Laravel" root && chfn -f "Laravel" www-data && chmod -R a+r /etc/ssmtp \
     && sed -i -- 's!/usr/sbin/sendmail -bs!/usr/sbin/sendmail -i -t!' config/mail.php
@@ -129,6 +134,6 @@ RUN apt-get update && apt-get install -y cron && echo "# Laravel scheduler" >> /
   && echo "* * * * * root cd /app && php artisan schedule:run >> /dev/null 2>&1" >> /etc/crontab
 
 # change rights
-RUN chown www-data:www-data -R bootstrap storage
+RUN chown www-data:www-data -R bootstrap storage && chmod -R a+rw bootstrap storage tests && chmod a+rw /app
 
 VOLUME /app
