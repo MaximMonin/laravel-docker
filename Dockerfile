@@ -107,7 +107,11 @@ COPY image/.env /app/
 
 # Install gitlab runner
 RUN curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | bash - \
-  && apt install -y gitlab-runner
+  && apt install -y gitlab-runner \
+# Add sudo right to gitlab-runner
+  && apt install -y sudo \
+  && echo 'gitlab-runner ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers \
+  && echo '' >> /etc/sudoers
 
 # Install NodeJs
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \ 
