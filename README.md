@@ -1,5 +1,5 @@
 # laravel-docker for development and testing
-This package includes: php-fpm 7.4 based enviroment, latest Laravel framework (7.x) with laravel libraries, NodeJs.v14, Nginx LoadBalancer, Laravel Echo, Php Admin, Redis, Mysql
+This package includes: php-fpm 7.4 based enviroment, latest Laravel framework (7.x) with laravel libraries, NodeJs.v14, Vue.js, Nginx LoadBalancer, Laravel Echo, Laravel Dusk, Selenium, Php Admin, Redis, Mysql, gitlab-runner
 
 ## Installation
 ~~~
@@ -26,12 +26,12 @@ Uses nginx static web server for your.site/cdn catalog and for *.js and *.css fi
 By default laravel container is default site, laravel-worker container run laravels workers and laravel scheduler.
 6. Setup laravel app/.env file.
 
-By default port 2380 used for local site testing and 2381 for php administration. (root/root)
+By default port 2380 used for local site testing and 2381 for mysql administration. (root/root)
 ~~~
 
 ## More
 ~~~
 Copy your project to ./app directory and run npm_run_dev.sh or npm_run_prod.sh to compile java script in development or production mode
 https://github.com/MaximMonin/laravel as test example.
-Use run_tests.sh to run phpunit tests, and run_tests_dusk.sh to run browser tests through Laravel Dusk
+Use run_tests.sh to run phpunit tests, and run_tests_dusk.sh to run browser tests through Laravel Dusk and Selenium
 ~~~
