@@ -35,3 +35,7 @@ Copy your project to ./app directory and run npm_run_dev.sh or npm_run_prod.sh t
 https://github.com/MaximMonin/laravel as test example.
 Use run_tests.sh to run phpunit tests, and run_tests_dusk.sh to run browser tests through Laravel Dusk and Selenium
 ~~~
+
+## Staging
+This image also used to create stage enviroment, with auto build, auto test capabilities. Gitlab-runner used for integration with Gitlab CI/CD process.
+See https://github.com/MaximMonin/laravel-stage project for more info.
