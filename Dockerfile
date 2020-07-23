@@ -63,7 +63,7 @@ COPY image/php-add.ini /usr/local/etc/php/conf.d/
 WORKDIR /
 RUN composer create-project --prefer-dist laravel/laravel app
 WORKDIR /app
-RUN composer require laravel/ui --dev
+RUN composer require laravel/ui
 
 # Install sms + localization + flysystem + chunk upload + image processing
 RUN composer require caouecs/laravel-lang:~6.0 \
