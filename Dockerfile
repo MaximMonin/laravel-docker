@@ -140,4 +140,3 @@ RUN apt-get update && apt-get install -y cron && echo "# Laravel scheduler" >> /
 # change rights
 RUN chown www-data:www-data -R bootstrap storage && chmod -R a+rw bootstrap storage tests && chmod a+rw /app
 
-VOLUME /app
