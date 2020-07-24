@@ -93,7 +93,6 @@ RUN composer require caouecs/laravel-lang:~6.0 \
     && apt-get -y install libnss3 && composer require laravel/dusk --dev && php artisan dusk:install
 
 # Install google chrome for Laravel Dusk
-ARG CHROME_VERSION="google-chrome-stable"
 RUN apt-get install -y gnupg2 && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
   && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
   && apt-get update -qqy \
@@ -140,3 +139,4 @@ RUN apt-get update && apt-get install -y cron && echo "# Laravel scheduler" >> /
 # change rights
 RUN chown www-data:www-data -R bootstrap storage && chmod -R a+rw bootstrap storage tests && chmod a+rw /app
 
+VOLUME /app
