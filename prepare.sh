@@ -9,6 +9,6 @@ chmod -R a+rw app
 rm -r tmp
 cp env-example ./app/.env
 docker run -d -v $(pwd)/app:/app --name laravel maximmonin/laravel
-docker exec -i laravel chown -R www-data:www-data /app/bootstrap /app/storage
-docker exec -i laravel chmod -R a+rw /app/bootstrap /app/storage
+docker exec -i laravel chown -R www-data:www-data /app/bootstrap /app/storage /app/tests
+docker exec -i laravel chmod -R a+rw /app/bootstrap /app/storage /app/tests
 docker rm -f laravel
