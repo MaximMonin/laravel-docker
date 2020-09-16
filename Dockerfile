@@ -30,7 +30,7 @@ RUN composer require caouecs/laravel-lang:~6.0 \
     && php artisan vendor:publish --tag=laravel-notifications \
     && php artisan notifications:table \
     && php artisan storage:link \
-    && php artisan ui -n vue && php artisan ui -n react && php artisan ui -n bootstrap  \
+    && php artisan ui -n vue && php artisan ui -n bootstrap  \
     && php artisan ui -n --auth bootstrap \
 # Install Laravel Dusk
     && apt-get -y install libnss3 && composer require laravel/dusk --dev && php artisan dusk:install
