@@ -4,15 +4,14 @@ COPY image/php-add.ini /usr/local/etc/php/conf.d/
 
 # Install laravel
 WORKDIR /
-RUN composer create-project --prefer-dist laravel/laravel app
+RUN composer create-project --prefer-dist laravel/laravel=~7.28 app
 WORKDIR /app
-RUN composer require laravel/ui
+RUN composer require laravel/ui=~2.4
 
 # Install sms + localization + flysystem + chunk upload + image processing + video processing
 RUN composer require caouecs/laravel-lang:~6.0 \
                      laravel-notification-channels/turbosms \
                      laravel/nexmo-notification-channel \
-                     graham-campbell/flysystem \
                      league/flysystem-aws-s3-v3 \
                      league/flysystem-sftp \
                      league/flysystem-webdav \
